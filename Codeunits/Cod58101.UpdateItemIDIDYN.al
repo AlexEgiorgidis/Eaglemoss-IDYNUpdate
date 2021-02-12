@@ -115,8 +115,10 @@ codeunit 58101 "UpdateItemID-IDYN"
                 if NC365ItemRec.FindSet(true, false) then begin
                     repeat
                         if ItemRec.Get(IDYNStaging."Item No.") then begin
-                            NC365ItemRec.Validate("Magento ID", IDYNStaging."Magento Entry");
-                            NC365ItemRec.Modify(true);
+                            //this is the bit of process we are not allowed to update                            
+                            // NC365ItemRec.Validate("Magento ID", IDYNStaging."Magento Entry");
+                            // NC365ItemRec.Modify(true);
+                            //this is the bit of process we are not allowed to update                            
                             IDYNStaging.Success := true;
                             IDYNStaging.Modify(false);
                         end else

@@ -1,11 +1,8 @@
-/*
-
 {
     "version": "0.2.0",
     "configurations": [
-       
         {
-            "name": "EAG-LIVE API",
+            "name": "EAG-UAT API",
             "type": "al",
             "request": "attach",
             "server": "http://localhost",
@@ -20,7 +17,7 @@
             "breakOnNext": "WebServiceClient",
             "tenant": "default",
             "port": 7549
-        },      
+        },
         {
             "type": "al",
             "request": "launch",
@@ -38,24 +35,23 @@
         }
     ]
 }
-*/
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "al",
-            "request": "launch",
-            "name": "Your own server",
-            "server": "http://localhost",
-            "serverInstance": "BC160",
-            "authentication": "Windows",
-            "breakOnError": true,
-            "launchBrowser": true,
-            "enableLongRunningSqlStatements": true,
-            "enableSqlInformationDebugger": true,
-            "tenant": "default",
-            "port": 7249,
-            "schemaUpdateMode": "ForceSync"
-        }
-    ]
-}
+// {
+//     "version": "0.2.0",
+//     "configurations": [
+//         {
+//             "type": "al",
+//             "request": "launch",
+//             "name": "Your own server",
+//             "server": "http://localhost",
+//             "serverInstance": "BC160",
+//             "authentication": "Windows",
+//             "breakOnError": true,
+//             "launchBrowser": true,
+//             "enableLongRunningSqlStatements": true,
+//             "enableSqlInformationDebugger": true,
+//             "tenant": "default",
+//             "port": 7249,
+//             "schemaUpdateMode": "ForceSync"
+//         }
+//     ]
+// }
