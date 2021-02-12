@@ -98,7 +98,6 @@ codeunit 58101 "UpdateItemID-IDYN"
         exit(false);
     end;
 
-
     procedure ProcessRecords(): Boolean
     var
         NC365ItemRec: record "NC365 Item";
