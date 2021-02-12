@@ -102,6 +102,7 @@ codeunit 58101 "UpdateItemID-IDYN"
     procedure ProcessRecords(): Boolean
     var
         NC365ItemRec: record "NC365 Item";
+        magentoID: record "NC365 Magento Id";
         IDYNStaging: record "IDYN Staging";
         ItemRec: record Item;
         ItemDoesNotExist: label 'Item %1 can not be found in %2.';
@@ -111,7 +112,7 @@ codeunit 58101 "UpdateItemID-IDYN"
         if IDYNStaging.FindSet(true, false) then begin
             repeat
                 NC365ItemRec.Reset();
-                NC365ItemRec.SetRange("No.", IDYNStaging."Item No."); //local sku or Item No.
+                NC365ItemRec.SetRange("No.", IDYNStaging."Item No.");
                 if NC365ItemRec.FindSet(true, false) then begin
                     repeat
                         if ItemRec.Get(IDYNStaging."Item No.") then begin
