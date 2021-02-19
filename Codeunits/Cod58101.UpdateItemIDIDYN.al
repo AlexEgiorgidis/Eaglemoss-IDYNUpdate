@@ -100,9 +100,10 @@ codeunit 58101 "UpdateItemID-IDYN"
 
     procedure ProcessRecords(): Boolean
     var
-        NC365ItemRec: record "NC365 Item";
-        magentoID: record "NC365 Magento Id";
         IDYNStaging: record "IDYN Staging";
+        NC365ItemRec: record "NC365 Item";
+        NC365IntegrationAPI: codeunit "NC365 Integration API";
+        NC365ItemAPI: codeunit "NC365 Item API";
         ItemRec: record Item;
         ItemDoesNotExist: label 'Item %1 can not be found in %2.';
     begin
@@ -110,28 +111,32 @@ codeunit 58101 "UpdateItemID-IDYN"
         IDYNStaging.Setrange("Process Record", true);
         if IDYNStaging.FindSet(true, false) then begin
             repeat
-                NC365ItemRec.Reset();
-                NC365ItemRec.SetRange("No.", IDYNStaging."Item No.");
-                if NC365ItemRec.FindSet(true, false) then begin
-                    repeat
-                        if ItemRec.Get(IDYNStaging."Item No.") then begin
-                            //this is the bit of process we are not allowed to update                            
-                            // NC365ItemRec.Validate("Magento ID", IDYNStaging."Magento Entry");
-                            // NC365ItemRec.Modify(true);
-                            //this is the bit of process we are not allowed to update                            
-                            IDYNStaging.Success := true;
-                            IDYNStaging.Modify(false);
-                        end else
-                            WriteErrorLog(IDYNStaging, StrSubstNo(ItemDoesNotExist, IDYNStaging."Item No.", ItemRec.TableCaption));
-                    until NC365ItemRec.Next() = 0;
-                end else begin
-                    WriteErrorLog(IDYNStaging, StrSubstNo(ItemDoesNotExist, IDYNStaging."Item No.", NC365ItemRec.TableCaption));
-                end;
+                //first try to get std item rec
+                if ItemRec.Get(IDYNStaging."Item No.") then begin
+                    //try to get the NC365 Item, if not create it
+                    NC365ItemRec.Reset();
+                    NC365ItemRec.SetRange("No.", IDYNStaging."Item No.");
+                    if not NC365ItemRec.FindFirst then begin
+                        NC365ItemAPI.CreateNC365Item(ItemRec);
+                    end;
+                    //try to find again
+                    NC365ItemRec.Reset();
+                    NC365ItemRec.SetRange("No.", IDYNStaging."Item No.");
+                    if NC365ItemRec.FindFirst then begin
+                        //create the connecction
+                        NC365IntegrationAPI.SetMagentoID(ItemRec, IDYNStaging."Magento Entry");
+                        IDYNStaging.Success := true;
+                        IDYNStaging.Modify(false);
+                    end else
+                        WriteErrorLog(IDYNStaging, StrSubstNo(ItemDoesNotExist, IDYNStaging."Item No.", NC365ItemRec.TableCaption));
+                end else
+                    WriteErrorLog(IDYNStaging, StrSubstNo(ItemDoesNotExist, IDYNStaging."Item No.", ItemRec.TableCaption));
             until IDYNStaging.Next() = 0;
         end;
         IDYNStaging.Reset();
         IDYNStaging.Setrange(Success, true);
         IDYNStaging.DeleteAll(false);
+        exit(true);
     end;
 
     procedure WriteErrorLog(p_IDYNStaging: record "IDYN Staging"; p_ErrorText: text)
